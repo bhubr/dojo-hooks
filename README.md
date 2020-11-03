@@ -37,7 +37,7 @@ function Counter() {
 
 1. Ecrire un formulaire de login (composant `Signin`) avec au deux champs input (email et password), chacun ayant un attribut `name` (`email` et `password`, donc !).
 2. Dans ce composant, initialiser un state avec `useState`, pour stocker **toutes** les données du formulaire. Sa valeur initiale : `{ email: '', password: '' }`.
-3. Ecrire une fonction `handleChange` qui permettra de gérer les saisies dans n'importe quel champ, et qui sera donc associé au `onClick` de chaque champ.
+3. Ecrire une fonction `handleChange` qui permettra de gérer les saisies dans n'importe quel champ, et qui sera donc associé au `onChange` de chaque champ.
 
 **Répéter la même chose** avec un composant `Signup`, qui aura les mêmes champs, avec en plus un champ additionnel `confirmPassword`. Le but n'est pas de tout refaire from scratch... Vous allez donc forcément avoir à dupliquer du code !
 
@@ -128,3 +128,30 @@ function DummyCounter() {
 L'idée est d'écrire un custom hook `useForm` qui va renvoyer, en plus de `formData` et `setFormData`, la méthode `handleChange`.
 
 On pourra alors éliminer la duplication de code entre `Signin` et `Signup` en utilisant `useForm` au lieu de `useState`.
+
+## 4. Gérer les ajouts dans un tableau avec un custom hook.
+
+On va créer une petite app de "todo-list".
+
+1. Créer un composant `TodoList` contenant un state `tasks` (et `setTasks`) initialisé via `useState` avec un tableau vide.
+2. Créer un composant `NewTask` qui va être appelé depuis `TodoList`. Ce sera un simple formulaire avec un input permettant de saisir une nouvelle tâche. Vous pouvez (pas obligatoire) réutiliser le custom hook `useForm` écrit précédemment.
+3. Passez une fonction `onSubmit` de `TodoList` à `NewTask` via les props. Pour l'instant, la fonction écrite dans le parent peut être une fonction vide : `() => {}`.
+4. Sur la balise `form`, associez au `onSubmit`, non pas directement le `onSubmit` passé par le parent, mais une fonction qui va :
+
+   1. empêcher l'event `submit` de vous faire sortir de la page,
+   2. appeler le `onSubmit` passé par le parent, en lui passant la valeur de l'input.
+
+5. Compléter la fonction vide écrite en 3. Elle va prendre en entrée l'intitulé de la nouvelle tâche. Puis à partir de cet intitulé, créer un objet ayant la forme `{ id: <un id numérique séquentiel>, label: 'intitulé de la tâche' }` (voir ci-dessous pour une façon simple de créer un id séquentiel). Ensuite, elle va stocker cet objet dans le tableau en appelant `setTasks`.
+6. Le vif du sujet : créer un custom hook pour gérer l'addition d'un élément à un tableau (logique qui se retrouve souvent dupliquée dans une app React). Il renverra, en plus de la valeur et de la fonction permettant de la muter, une fonction `addItem` qui, quand on l'appellera, ajoutera un élément au tableau.
+
+**Annexe :** fonction permettant de générer des `id` séquentiels (c'est un exemple de _closure_) :
+
+```javascript
+const getId = (() => {
+  let value = 0;
+  return () => {
+    value += 1;
+    return value;
+  };
+})();
+```
