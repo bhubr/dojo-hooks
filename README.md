@@ -155,3 +155,12 @@ const getId = (() => {
   };
 })();
 ```
+
+Si on l'appelle plusieurs fois, on obtient toujours un `id` qui fait suite au précédent :
+
+```javascript
+console.log(getId()); // 1
+console.log(getId()); // 2
+```
+
+C'est une façon comme une autre de simuler l'auto-incrément des `id` des enregistrements dans une base de données :smiley:.
