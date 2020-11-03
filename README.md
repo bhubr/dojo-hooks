@@ -68,3 +68,63 @@ function UsersList() {
 4. Ajouter un troisième state qui servira à stocker un objet contenant les _détails_ d'un utilisateur (l'initialiser à `null`).
 5. Ajouter un deuxième `useEffect`, avec dans son "tableau de dépendances" le "state" correspondant à l'id de l'utilisateur sélectionné. Dans ce `useEffect`, appeler le endpoint permettant d'obtenir les détails d'un utilisateur : <https://api.github.com/users/ID> (remplacer `ID` par l'id numérique stocké dans le "2ème state"). Stocker les data obtenues dans le state mis en place dans le point précédent. Vérifier que le 3ème state se met à jour avec de nouvelles données quand on clique sur un autre utilisateur.
 6. Afficher quelques-unes des data récupérées via le endpoint de "détails d'un utilisateur" : par exemple la `location` et les `followers`.
+
+## 3. Custom hook pour gérer un formulaire
+
+Si tout s'est bien passé, dans les formulaires de la section 1 sur `useState`, vous devez avoir un `handleChange` qui ressemble à ça (j'ai destructuré les data imbriquées dans l'event) :
+
+```javascript
+const handleChange = ({ target: { name, value } }) =>
+  setFormData((prevFormData) => ({
+    ...prevFormData,
+    [name]: value,
+  }));
+```
+
+Et ce, dans chacun des formulaires `Signin` et `Signup`.
+
+Ce n'est pas "horrible" en termes de quantité de code dupliqué, mais on peut faire mieux !
+
+### Exemple de custom hook
+
+Celui-ci n'a pas un grand intérêt, c'est juste pour l'exemple (gérer un compteur) :
+
+```javascript
+// src/hooks/useCounter.js
+import { useState } from 'react';
+
+export default function useCounter(initialValue = 0) {
+  const [count, setCount] = useState(initialValue);
+
+  const decrement = () => setCount((prevCount) => prevCount - 1);
+  const increment = () => setCount((prevCount) => prevCount + 1);
+
+  return [count, decrement, increment];
+}
+```
+
+Dans le code qui l'utilise (on a importé `useCounter`) :
+
+```javascript
+function DummyCounter() {
+  const [count, dec, inc] = useCounter();
+
+  return (
+    <div>
+      <button type="button" onClick={dec}>
+        -
+      </button>
+      {count}
+      <button type="button" onClick={inc}>
+        +
+      </button>
+    </div>
+  );
+}
+```
+
+### Exercice : factoriser le `handleChange` dans un custom hook
+
+L'idée est d'écrire un custom hook `useForm` qui va renvoyer, en plus de `formData` et `setFormData`, la méthode `handleChange`.
+
+On pourra alors éliminer la duplication de code entre `Signin` et `Signup` en utilisant `useForm` au lieu de `useState`.
